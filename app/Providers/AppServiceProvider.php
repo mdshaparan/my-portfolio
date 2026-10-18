@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Menu;
 use App\Models\Message;
 use App\Models\Setting;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -17,6 +18,11 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Force https links in production so CSS/JS/images are not blocked as mixed content
+        if (app()->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         // Frontend: navbar menus (from DB), site settings, resume link.
         // Queried once and reused so partials do not hit the database repeatedly.
         View::composer('frontend.*', function ($view) {
